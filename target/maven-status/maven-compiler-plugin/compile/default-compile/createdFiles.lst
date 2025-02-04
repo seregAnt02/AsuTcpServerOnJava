@@ -1,0 +1,4 @@
+AsuTcpServerApplication.class
+duma/asu/models/Message.class
+duma/asu/presents/Server.class
+duma/asu/presents/ClientManager.class

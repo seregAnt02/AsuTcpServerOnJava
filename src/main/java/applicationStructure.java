@@ -30,7 +30,7 @@ class applicationStructure{
     class Parameter{
         public int id;
         public java.sql.Date datetime;
-        public String parameter;
+        public String name;
         public String codParameter;
         public String lastUpdate;
         public int meaning;

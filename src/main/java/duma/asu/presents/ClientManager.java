@@ -1,6 +1,6 @@
 package duma.asu.presents;
 
-import duma.asu.models.serializableModels.Message;
+import duma.asu.models.serializableModels.Parameter;
 
 import java.io.*;
 import java.net.Socket;
@@ -21,8 +21,8 @@ public class ClientManager implements Runnable{
         this.input = new ObjectInputStream(socket.getInputStream());
         this.output = new ObjectOutputStream(socket.getOutputStream());
 
-        Message message = modelDeserialization();
-        clients.put(message.getName(), this);
+        Parameter parameter = modelDeserialization();
+        clients.put(parameter.getName(), this);
 
     }
 
@@ -30,8 +30,8 @@ public class ClientManager implements Runnable{
     public void run() {
         while (socket.isConnected()){
             try {
-                Message message  = modelDeserialization();
-                sendMessageToClient(message);
+                Parameter parameter  = modelDeserialization();
+                sendModelToClient(parameter);
             } catch (IOException e) {
                 closeEverything();
             } catch (ClassNotFoundException e) {
@@ -39,19 +39,19 @@ public class ClientManager implements Runnable{
             }
         }
     }
-    private Message modelDeserialization() throws IOException, ClassNotFoundException {
-        Message message = (Message) input.readObject();
-        System.out.println("десерилизация объекта " + message.getClass() + ": " + message.getName());
-        return message;
+    private Parameter modelDeserialization() throws IOException, ClassNotFoundException {
+        Parameter parameter = (Parameter) input.readObject();
+        System.out.println("десерилизация объекта " + parameter.getClass() + ": " + parameter.getName());
+        return parameter;
     }
 
-    private void sendMessageToClient(Message message){
+    private void sendModelToClient(Parameter parameter){
         for (var client: clients.entrySet()) {
             try {
-                if (client.getKey().equals(message.getToName()) && !message.getName().equals(name)) {
-                    client.getValue().output.writeObject(message);
+                //if (client.getKey().equals(parameter.getToName()) && !parameter.getName().equals(name)) {
+                    client.getValue().output.writeObject(parameter);
                     client.getValue().output.flush();
-                }
+                //}
             } catch (IOException e){
                 closeEverything();
             }

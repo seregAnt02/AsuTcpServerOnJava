@@ -1,4 +1,4 @@
-package duma.asu.models;
+package duma.asu.serializableModels;
 
 import java.io.Serializable;
 

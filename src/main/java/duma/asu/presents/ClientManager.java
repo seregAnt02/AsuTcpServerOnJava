@@ -1,13 +1,11 @@
 package duma.asu.presents;
 
-import duma.asu.serializableModels.Message;
+import duma.asu.models.serializableModels.Message;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
-
-import static java.lang.System.out;
 
 public class ClientManager implements Runnable{
     private Socket socket;

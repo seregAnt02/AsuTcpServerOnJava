@@ -1,4 +1,4 @@
-package duma.asu.serializableModels;
+package duma.asu.models.serializableModels;
 
 import java.util.Date;
 import java.util.UUID;

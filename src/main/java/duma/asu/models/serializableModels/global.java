@@ -1,4 +1,4 @@
-package duma.asu.serializableModels;
+package duma.asu.models.serializableModels;
 
 public class global {
     public final int MAXBUFFER = 8000000;//1048576;

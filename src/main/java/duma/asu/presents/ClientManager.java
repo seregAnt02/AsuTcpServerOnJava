@@ -8,11 +8,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ClientManager implements Runnable{
-    private Socket socket;
+    private final Socket socket;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
-    private ObjectInputStream input;
-    private ObjectOutputStream output;
+    private final ObjectInputStream input;
+    private final ObjectOutputStream output;
     private String name;
     public static Map<String, ClientManager> clients = new HashMap<>();
 

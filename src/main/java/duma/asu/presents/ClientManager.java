@@ -1,6 +1,8 @@
 package duma.asu.presents;
 
+import duma.asu.models.interfaces.SendDataParameter;
 import duma.asu.models.serializableModels.Parameter;
+import duma.asu.views.ViewReadStreamReturnGenericObject;
 
 import java.io.*;
 import java.net.Socket;
@@ -16,13 +18,26 @@ public class ClientManager implements Runnable{
     private String name;
     public static Map<String, ClientManager> clients = new HashMap<>();
 
+    private ViewReadStreamReturnGenericObject viewReadStreamReturnGenericObject;
+    private ReadStreamReturnGenericObject<Parameter> readStreamReturnGenericObject;
+
     public ClientManager(Socket socket) throws IOException, ClassNotFoundException {
         this.socket = socket;
         this.input = new ObjectInputStream(socket.getInputStream());
         this.output = new ObjectOutputStream(socket.getOutputStream());
 
-        Parameter parameter = modelDeserialization();
-        clients.put(parameter.getName(), this);
+        readStreamReturnGenericObject = new ReadStreamReturnGenericObject(this.input);
+
+
+        viewReadStreamReturnGenericObject = new ViewReadStreamReturnGenericObject();
+
+
+        SendDataParameter sendDataParameter = readStreamReturnGenericObject.modelDeserialization();
+        //Parameter parameter = (Parameter) sendDataParameter;
+        viewReadStreamReturnGenericObject.viewsNameAndClass(sendDataParameter.getClass().toString(),
+                sendDataParameter.getName());
+
+        clients.put(sendDataParameter.name, this);
 
     }
 
@@ -30,8 +45,10 @@ public class ClientManager implements Runnable{
     public void run() {
         while (socket.isConnected()){
             try {
-                Parameter parameter  = modelDeserialization();
-                sendModelToClient(parameter);
+                SendDataParameter sendDataParameter  = readStreamReturnGenericObject.modelDeserialization();
+                viewReadStreamReturnGenericObject.viewsNameAndClass(sendDataParameter.getClass().toString(),
+                        sendDataParameter.getName());
+                sendModelToClient(sendDataParameter);
             } catch (IOException e) {
                 closeEverything();
             } catch (ClassNotFoundException e) {
@@ -39,17 +56,13 @@ public class ClientManager implements Runnable{
             }
         }
     }
-    private Parameter modelDeserialization() throws IOException, ClassNotFoundException {
-        Parameter parameter = (Parameter) input.readObject();
-        System.out.println("десерилизация объекта " + parameter.getClass() + ": " + parameter.getName());
-        return parameter;
-    }
 
-    private void sendModelToClient(Parameter parameter){
+
+    private void sendModelToClient(SendDataParameter sendDataParameter){
         for (var client: clients.entrySet()) {
             try {
                 //if (client.getKey().equals(parameter.getToName()) && !parameter.getName().equals(name)) {
-                    client.getValue().output.writeObject(parameter);
+                    client.getValue().output.writeObject(sendDataParameter);
                     client.getValue().output.flush();
                 //}
             } catch (IOException e){

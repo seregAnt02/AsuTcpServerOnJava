@@ -1,4 +1,7 @@
 
+import duma.asu.models.interfaces.SendDataParameter;
+
+import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
@@ -35,15 +38,72 @@ class applicationStructure{
         public int age;
     }
 
-    class Parameter{
-        public int id;
-        public java.sql.Date datetime;
-        public String name;
-        public String codParameter;
-        public String lastUpdate;
-        public int meaning;
-        public int dumaId;// внешний ключь
-        public Duma duma  = new Duma();//навигационное свойство
+    class Parameter {
+
+        private static final long serialVersionUID = 1L;
+
+
+        private int id;
+        private java.sql.Date datetime;
+        private String name;
+        private String codParameter;
+        private String lastUpdate;
+        private int meaning;
+        private int dumaId;// внешний ключь
+        //public Duma duma  = new Duma();//навигационное свойство
+
+
+        public Parameter(String name, String extension) {
+            this.name = name;
+        }
+
+        public String getName(){ return name; }
+
+
+        public int getMeaning(){ return meaning; }
+
+
+        public int setMeaning(int meaning){ return this.meaning = meaning; }
+
+
+        @Override
+        public String toString() {
+            return "Parameter{" +
+                    "id=" + id +
+                    ", datetime=" + datetime +
+                    ", name='" + name + '\'' +
+                    ", codParameter='" + codParameter + '\'' +
+                    ", lastUpdate='" + lastUpdate + '\'' +
+                    ", meaning=" + meaning +
+                    ", dumaId=" + dumaId +
+                    '}';
+        }
+    }
+
+
+    class DataFile {
+
+        public String nameFile;
+        public Date dateTime;
+        public Integer filesize;
+        public byte[] data;
+        public String extension;
+        public Integer indexFile;
+        public Integer idNumberFolder;
+        public Integer headerSize;
+
+
+        public DataFile(String nameFile) {
+            this.nameFile = nameFile;
+        }
+
+
+        public String getName(){ return this.nameFile; }
+
+
+        public String setExtension(String extension){
+            return this.extension = extension;
+        }
     }
     //----------------------
 
@@ -75,15 +135,17 @@ class applicationStructure{
         /*
             2. Отправлять и принимать запрос на изменение или устанавления нового значения:
               * Создать объект ClientManager и имплементировать функциональный интерфейс Runnable.
+              * Создать обобщенный объект типа ReadStreamReturnGenericObject, с одним из методов
+                 modelDeserialization(), с возвращаемым обобщенным типом T.
               * Создать интерфейс SendDataParameter, для возврата в методе modelDeserialization
-                десереализованного объекта, т.е. добавить слабасвязанность и универсальность.
+                 десереализованного объекта, т.е. добавить слабасвязанность и универсальность.
               * Создать массив типа Map<String, ClientManager>, для хранения подключенных клиентов.
               * В перегруженном методе run() объекта Runnable, в цикле с условием на
                  подключение с клиентом, организовать чтение входящего потока и во вложенном
-                 методе modelDeserialization(), десериализовать в объект типа T.
-              * Создать вложенный метод sendModelToClient(T model) и реализовать функцию
+                 методе modelDeserialization(), десериализовать в объект типа SendDataParameter.
+              * Создать вложенный метод sendModelToClient(SendDataParameter model) и реализовать функцию
                  по поиску в массиве клиента, по ключу имени клиента и оправить клиенту входящий
-                 аргумент метода типа T.
+                 аргумент метода типа SendDataParameter, об успешном подключений нового клиента на сервере.
               * Реализовать в конструкций try/catch на ошибки ввода-вывода т.е IOException,
                 при исключений вода-вывода в методе closeEverything() закрыть входящий поток,
                 удалить клиента с массива клиентов или вывести стек-трейс консоли при возникновений
@@ -98,10 +160,10 @@ class applicationStructure{
         }
 
         // Считывание входящего потока и  десерилизация в объект.
-        private Parameter modelDeserialization(){return null;}
+        private SendDataParameter modelDeserialization(){return null;}
 
         // Запись объекта в поток, сереализуемой модели.
-        private void sendModelToClient(Parameter message){}
+        private void sendModelToClient(SendDataParameter model){}
 
         // Закрытие входящего потока.
         private void closeEverything(){}

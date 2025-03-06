@@ -7,6 +7,9 @@ import java.util.Date;
 
 public class DataFile implements Serializable, SendDataParameter {
 
+    private static final long serialVersionUID = 2L;
+
+
     public String nameFile;
     public Date dateTime;
     public Integer filesize;

@@ -1,16 +1,14 @@
 package duma.asu.presents;
 
-import duma.asu.views.ViewReadStreamReturnGenericObject;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-public class ReadStreamReturnGenericObject<T> {
+public class ReadWriteStreamAndReturnGenericObject<T> {
 
     private final ObjectInputStream input;
 
 
-    public ReadStreamReturnGenericObject(ObjectInputStream input) {
+    public ReadWriteStreamAndReturnGenericObject(ObjectInputStream input) {
         this.input = input;
     }
 

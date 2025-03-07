@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.UUID;
 
 public class Duma {
+
     public UUID id;
     public String guid;
     public Date datetime;
@@ -12,6 +13,4 @@ public class Duma {
     public int port;
     public String status;
     public int number;
-    public String migration;
-    public int age;
 }

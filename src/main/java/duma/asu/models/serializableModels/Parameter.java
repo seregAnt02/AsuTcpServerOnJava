@@ -5,13 +5,14 @@ import duma.asu.models.interfaces.SendDataParameter;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.UUID;
 
 public class Parameter implements Serializable, SendDataParameter {
 
     private static final long serialVersionUID = 1L;
 
 
-    private int id;
+    private UUID id;
     private Date datetime;
     private String name;
     private String codParameter;

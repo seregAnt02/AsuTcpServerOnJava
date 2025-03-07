@@ -19,14 +19,14 @@ public class ClientManager implements Runnable{
     public static Map<String, ClientManager> clients = new HashMap<>();
 
     private ViewReadStreamReturnGenericObject viewReadStreamReturnGenericObject;
-    private ReadStreamReturnGenericObject<Parameter> readStreamReturnGenericObject;
+    private ReadWriteStreamAndReturnGenericObject<Parameter> readStreamReturnGenericObject;
 
     public ClientManager(Socket socket) throws IOException, ClassNotFoundException {
         this.socket = socket;
         this.input = new ObjectInputStream(socket.getInputStream());
         this.output = new ObjectOutputStream(socket.getOutputStream());
 
-        readStreamReturnGenericObject = new ReadStreamReturnGenericObject(this.input);
+        readStreamReturnGenericObject = new ReadWriteStreamAndReturnGenericObject(this.input);
 
 
         viewReadStreamReturnGenericObject = new ViewReadStreamReturnGenericObject();

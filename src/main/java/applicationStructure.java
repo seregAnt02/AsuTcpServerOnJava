@@ -1,7 +1,6 @@
 
 import duma.asu.models.interfaces.SendDataParameter;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
@@ -34,8 +33,6 @@ class applicationStructure{
         public int port;
         public String status;
         public int number;
-        public String migration;
-        public int age;
     }
 
     class Parameter {
@@ -43,7 +40,7 @@ class applicationStructure{
         private static final long serialVersionUID = 1L;
 
 
-        private int id;
+        private UUID id;
         private java.sql.Date datetime;
         private String name;
         private String codParameter;
@@ -83,13 +80,14 @@ class applicationStructure{
 
     class DataFile {
 
+        public UUID id;
         public String nameFile;
         public Date dateTime;
         public Integer filesize;
         public byte[] data;
         public String extension;
         public Integer indexFile;
-        public Integer idNumberFolder;
+        public Integer numberFolder;
         public Integer headerSize;
 
 
@@ -107,11 +105,10 @@ class applicationStructure{
     }
     //----------------------
 
+
     class Server{
         /*
             1. Подключить соединения с клиентами в асинхронным режиме:
-               * Добавить аутентификацию на стороне сервера, для этого интегрировать библиотеку
-                   Keycloak для управления идентификацией и доступом к сервису.
                * Добавить объект ServerSocket, этот класс реализует серверные сокеты,
                    серверный сокет ожидает поступления запросов по сети.
                * В функций метода runServer(), реализовать функцию прослушивателя в виде цикла, с
@@ -136,6 +133,8 @@ class applicationStructure{
         /*
             2. Отправлять и принимать запрос на изменение или устанавления нового значения:
               * Создать объект ClientManager и имплементировать функциональный интерфейс Runnable.
+              * Добавить JSSE функциональность для шифрования данных, аутентификации сервера,
+                   целостности сообщения и дополнительной аутентификации клиента.
               * Создать обобщенный объект типа ReadWriteStreamAndReturnGenericObject, с одним из методов
                  modelDeserialization(), с возвращаемым обобщенным типом T.
               * Создать интерфейс SendDataParameter, для возврата в методе modelDeserialization
@@ -172,6 +171,25 @@ class applicationStructure{
         // Удаление клиента с коллекций масива.
         public void removeClient(){}
     }
+
+
+    class HttpServer{
+
+        /*
+            2.1 Реализовать асинхронный прослушиватель на порту сервера, с исходящего http запроса прикладного уровня:
+                * C http Get запроса из последнего сегмента строки, распределить комманды для
+                   обновления данных или запуска процесса на клиенте, по созданию ауди-видео контента.
+                * Отправить сериализованный объект типа SendDataParameter к клиенту.
+                * Перенаправить пользователя на страницу с обновленными данными или к плееру
+                   видеопроигрывателя Dash, библиотеки Video.js, согласно коммандной строки сегмента запроса.
+        */
+
+        void httpListener(){}
+
+
+        void commandSwitch(){}
+    }
+
 
 // Save model sql
 

@@ -18,7 +18,7 @@ public class DataFile implements Serializable, SendDataParameter {
     public byte[] data;
     public String extension;
     public Integer indexFile;
-    public Integer idNumberFolder;
+    public Integer numberFolder;
     public Integer headerSize;
 
 

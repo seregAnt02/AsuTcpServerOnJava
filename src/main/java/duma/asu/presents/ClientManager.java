@@ -9,6 +9,10 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.logging.*;
+
+//import javax.net.ssl.SSLContext;
+
 public class ClientManager implements Runnable{
     private final Socket socket;
     private BufferedReader bufferedReader;

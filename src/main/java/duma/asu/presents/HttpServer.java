@@ -10,6 +10,11 @@ import java.nio.charset.StandardCharsets;
 
 public class HttpServer {
 
+    void commandSwitch(){
+
+    }
+
+
     public void httpListener(){
 
         try (ServerSocket serverSocket = new ServerSocket(6088)) {

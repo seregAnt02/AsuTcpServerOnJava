@@ -1,4 +1,13 @@
-/home/serega02/projectJava/asuTcpServerOnJava/src/main/java/duma/asu/models/Message.java
+/home/serega02/projectJava/asuTcpServerOnJava/src/main/java/duma/asu/models/serializableModels/Duma.java
+/home/serega02/projectJava/asuTcpServerOnJava/src/main/java/applicationStructure.java
 /home/serega02/projectJava/asuTcpServerOnJava/src/main/java/duma/asu/presents/Server.java
+/home/serega02/projectJava/asuTcpServerOnJava/src/main/java/duma/asu/models/interfaces/SendDataParameter.java
+/home/serega02/projectJava/asuTcpServerOnJava/src/main/java/duma/asu/models/serializableModels/DataFile.java
+/home/serega02/projectJava/asuTcpServerOnJava/src/main/java/duma/asu/views/ViewReadStreamReturnGenericObject.java
+/home/serega02/projectJava/asuTcpServerOnJava/src/main/java/duma/asu/models/serializableModels/Message.java
+/home/serega02/projectJava/asuTcpServerOnJava/src/main/java/duma/asu/presents/HttpServer.java
 /home/serega02/projectJava/asuTcpServerOnJava/src/main/java/duma/asu/presents/ClientManager.java
+/home/serega02/projectJava/asuTcpServerOnJava/src/main/java/duma/asu/models/serializableModels/Parameter.java
+/home/serega02/projectJava/asuTcpServerOnJava/src/main/java/duma/asu/models/serializableModels/global.java
+/home/serega02/projectJava/asuTcpServerOnJava/src/main/java/duma/asu/presents/ReadWriteStreamAndReturnGenericObject.java
 /home/serega02/projectJava/asuTcpServerOnJava/src/main/java/AsuTcpServerApplication.java

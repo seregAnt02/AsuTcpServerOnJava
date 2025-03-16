@@ -15,8 +15,8 @@ import java.util.logging.*;
 
 public class ClientManager implements Runnable{
     private final Socket socket;
-    private BufferedReader bufferedReader;
-    private BufferedWriter bufferedWriter;
+    /*private BufferedReader bufferedReader;
+    private BufferedWriter bufferedWriter;*/
     private final ObjectInputStream input;
     private final ObjectOutputStream output;
     private String name;
@@ -33,6 +33,14 @@ public class ClientManager implements Runnable{
         readStreamReturnGenericObject = new ReadWriteStreamAndReturnGenericObject(this.input);
 
 
+        Runnable task = () -> {
+
+            new HttpServer().httpListener();
+        };
+        Thread thread = new Thread(task);
+        thread.start();
+
+
         viewReadStreamReturnGenericObject = new ViewReadStreamReturnGenericObject();
 
 
@@ -41,7 +49,7 @@ public class ClientManager implements Runnable{
         viewReadStreamReturnGenericObject.viewsNameAndClass(sendDataParameter.getClass().toString(),
                 sendDataParameter.getName());
 
-        clients.put(sendDataParameter.name, this);
+        clients.put(sendDataParameter.getName(), this);
 
     }
 

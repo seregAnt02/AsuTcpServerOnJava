@@ -3,6 +3,7 @@ package duma.asu.models.serializableModels;
 import duma.asu.models.interfaces.SendDataParameter;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
 
@@ -32,5 +33,21 @@ public class DataFile implements Serializable, SendDataParameter {
 
     public String setExtension(String extension){
         return this.extension = extension;
+    }
+
+
+    @Override
+    public String toString() {
+        return "DataFile{" +
+                "id=" + id +
+                ", nameFile='" + nameFile + '\'' +
+                ", dateTime=" + dateTime +
+                ", filesize=" + filesize +
+                ", data=" + Arrays.toString(data) +
+                ", extension='" + extension + '\'' +
+                ", indexFile=" + indexFile +
+                ", numberFolder=" + numberFolder +
+                ", headerSize=" + headerSize +
+                '}';
     }
 }

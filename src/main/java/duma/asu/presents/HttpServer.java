@@ -1,58 +1,86 @@
 package duma.asu.presents;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import duma.asu.models.interfaces.SendDataParameter;
+import duma.asu.models.serializableModels.DataFile;
+import duma.asu.models.serializableModels.Parameter;
+
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
+import static java.lang.System.out;
+
+
 public class HttpServer {
 
-    void commandSwitch(){
+    private ClientManager clientManager;
 
+
+    protected HttpServer(ClientManager clientManager) {
+        this.clientManager = clientManager;
+    }
+
+    private void commandSwitch() throws IOException, Exception {
+
+        DataFile dataFile = new DataFile("server_name");
+
+        this.clientManager.sendModelToClient(dataFile);
+
+        this.clientManager.viewReadStreamReturnGenericObject.viewSendModelToClient(dataFile.getName());
+
+        out.print("serialize object... " + dataFile);
     }
 
 
-    public void httpListener(){
+    protected void httpListener(){
 
         try (ServerSocket serverSocket = new ServerSocket(6088)) {
-            System.out.println("Http server started!");
+            out.println("Http server on port " +  serverSocket.getLocalPort() + ", started!");
 
             while (true) {
                 // ожидаем подключения
                 Socket socket = serverSocket.accept();
-                System.out.println("Client connected!");
+                out.println("Client connected!");
+
+                commandSwitch();
 
                 // для подключившегося клиента открываем потоки
                 // чтения и записи
                 try (BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
-                     PrintWriter output = new PrintWriter(socket.getOutputStream())) {
+                     ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream())) {
 
                     // ждем первой строки запроса
                     while (!input.ready()) ;
 
                     // считываем и печатаем все что было отправлено клиентом
-                    System.out.println();
+                    out.println();
                     while (input.ready()) {
-                        System.out.println(input.readLine());
+                        out.println(input.readLine());
                     }
 
                     // отправляем ответ
-                    output.println("HTTP/1.1 200 OK");
-                    output.println("Content-Type: text/html; charset=utf-8");
-                    output.println();
-                    output.println("<p>Привет всем!</p>");
-                    output.flush();
+                    try(PrintWriter printWriter = new PrintWriter(socket.getOutputStream())){
+                        printWriter.println("HTTP/1.1 200 OK");
+                        printWriter.println("Content-Type: text/html; charset=utf-8");
+                        printWriter.println();
+                        printWriter.println("<p>Привет всем!</p>");
+                        printWriter.flush();
+                    }catch (IOException ex){
+                        out.print(ex.getMessage());
+                    }
 
                     // по окончанию выполнения блока try-with-resources потоки,
                     // а вместе с ними и соединение будут закрыты
-                    System.out.println("Client disconnected!");
+                    out.println("Client disconnected!");
                 }
             }
         } catch (IOException ex) {
             ex.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
     }

@@ -9,8 +9,6 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
-import java.util.logging.*;
-
 //import javax.net.ssl.SSLContext;
 
 public class ClientManager implements Runnable{
@@ -22,20 +20,20 @@ public class ClientManager implements Runnable{
     private String name;
     public static Map<String, ClientManager> clients = new HashMap<>();
 
-    private ViewReadStreamReturnGenericObject viewReadStreamReturnGenericObject;
-    private ReadWriteStreamAndReturnGenericObject<Parameter> readStreamReturnGenericObject;
+    protected ViewReadStreamReturnGenericObject viewReadStreamReturnGenericObject;
+    private ReadWriteStreamAndReturnGenericObject<Parameter> readStreamAndReturnGenericObject;
 
-    public ClientManager(Socket socket) throws IOException, ClassNotFoundException {
+    protected ClientManager(Socket socket) throws IOException, ClassNotFoundException {
         this.socket = socket;
         this.input = new ObjectInputStream(socket.getInputStream());
         this.output = new ObjectOutputStream(socket.getOutputStream());
 
-        readStreamReturnGenericObject = new ReadWriteStreamAndReturnGenericObject(this.input);
+        readStreamAndReturnGenericObject = new ReadWriteStreamAndReturnGenericObject(this.input);
 
 
         Runnable task = () -> {
 
-            new HttpServer().httpListener();
+            new HttpServer(this).httpListener();
         };
         Thread thread = new Thread(task);
         thread.start();
@@ -44,7 +42,7 @@ public class ClientManager implements Runnable{
         viewReadStreamReturnGenericObject = new ViewReadStreamReturnGenericObject();
 
 
-        SendDataParameter sendDataParameter = readStreamReturnGenericObject.modelDeserialization();
+        SendDataParameter sendDataParameter = readStreamAndReturnGenericObject.InputDeserialization();
         //Parameter parameter = (Parameter) sendDataParameter;
         viewReadStreamReturnGenericObject.viewsNameAndClass(sendDataParameter.getClass().toString(),
                 sendDataParameter.getName());
@@ -57,7 +55,7 @@ public class ClientManager implements Runnable{
     public void run() {
         while (socket.isConnected()){
             try {
-                SendDataParameter sendDataParameter  = readStreamReturnGenericObject.modelDeserialization();
+                SendDataParameter sendDataParameter  = readStreamAndReturnGenericObject.InputDeserialization();
                 viewReadStreamReturnGenericObject.viewsNameAndClass(sendDataParameter.getClass().toString(),
                         sendDataParameter.getName());
                 sendModelToClient(sendDataParameter);
@@ -70,7 +68,7 @@ public class ClientManager implements Runnable{
     }
 
 
-    private void sendModelToClient(SendDataParameter sendDataParameter){
+    protected void sendModelToClient(SendDataParameter sendDataParameter){
         for (var client: clients.entrySet()) {
             try {
                 //if (client.getKey().equals(parameter.getToName()) && !parameter.getName().equals(name)) {

@@ -193,7 +193,7 @@ class applicationStructure{
         void httpListener(){}
 
 
-        void commandSwitch(){}
+        void sendObjectToClient(String name){}
     }
 
 

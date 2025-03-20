@@ -18,8 +18,9 @@ public class Parameter implements Serializable, SendDataParameter {
     private String codParameter;
     private String lastUpdate;
     private int meaning;
+
+    private String message;
     private int dumaId;// внешний ключь
-    //public Duma duma  = new Duma();//навигационное свойство
 
 
     public Parameter(String name, String extension) {
@@ -35,6 +36,15 @@ public class Parameter implements Serializable, SendDataParameter {
     public int setMeaning(int meaning){ return this.meaning = meaning; }
 
 
+    public String getMessage() {
+        return message;
+    }
+
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     @Override
     public String toString() {
         return "Parameter{" +
@@ -44,6 +54,7 @@ public class Parameter implements Serializable, SendDataParameter {
                 ", codParameter='" + codParameter + '\'' +
                 ", lastUpdate='" + lastUpdate + '\'' +
                 ", meaning=" + meaning +
+                ", message='" + message + '\'' +
                 ", dumaId=" + dumaId +
                 '}';
     }

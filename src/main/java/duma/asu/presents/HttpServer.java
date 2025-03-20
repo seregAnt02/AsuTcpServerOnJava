@@ -1,7 +1,6 @@
 package duma.asu.presents;
 
 import duma.asu.models.interfaces.SendDataParameter;
-import duma.asu.models.serializableModels.DataFile;
 import duma.asu.models.serializableModels.Parameter;
 
 import java.io.*;
@@ -21,15 +20,22 @@ public class HttpServer {
         this.clientManager = clientManager;
     }
 
-    private void commandSwitch() throws IOException, Exception {
 
-        DataFile dataFile = new DataFile("server_name");
 
-        this.clientManager.sendModelToClient(dataFile);
+    private void commandSwitch(){
 
-        this.clientManager.viewReadStreamReturnGenericObject.viewSendModelToClient(dataFile.getName());
+    }
 
-        out.print("serialize object... " + dataFile);
+
+    private void sendObjectToClient(String name) throws IOException, Exception {
+
+        SendDataParameter parameter = new Parameter(name, null);
+
+        this.clientManager.sendDataToClient(parameter);
+
+        this.clientManager.viewReadStreamReturnGenericObject.viewSendModelToClient(parameter.getName());
+
+        out.print("serialize object... " + parameter);
     }
 
 
@@ -43,7 +49,8 @@ public class HttpServer {
                 Socket socket = serverSocket.accept();
                 out.println("Client connected!");
 
-                commandSwitch();
+
+                sendObjectToClient("client_name");
 
                 // для подключившегося клиента открываем потоки
                 // чтения и записи

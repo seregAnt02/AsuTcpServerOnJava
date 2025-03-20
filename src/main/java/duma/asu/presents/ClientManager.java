@@ -58,7 +58,7 @@ public class ClientManager implements Runnable{
                 SendDataParameter sendDataParameter  = readStreamAndReturnGenericObject.InputDeserialization();
                 viewReadStreamReturnGenericObject.viewsNameAndClass(sendDataParameter.getClass().toString(),
                         sendDataParameter.getName());
-                sendModelToClient(sendDataParameter);
+                sendDataToClient(sendDataParameter);
             } catch (IOException e) {
                 closeEverything();
             } catch (ClassNotFoundException e) {
@@ -68,7 +68,7 @@ public class ClientManager implements Runnable{
     }
 
 
-    protected void sendModelToClient(SendDataParameter sendDataParameter){
+    protected void sendDataToClient(SendDataParameter sendDataParameter){
         for (var client: clients.entrySet()) {
             try {
                 //if (client.getKey().equals(parameter.getToName()) && !parameter.getName().equals(name)) {

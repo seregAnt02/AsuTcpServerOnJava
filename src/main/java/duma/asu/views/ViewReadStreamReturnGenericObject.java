@@ -7,7 +7,7 @@ public class ViewReadStreamReturnGenericObject {
 
 
     public void viewSendModelToClient(String name){
-        System.out.print("Объект отправлен клиенту " + name);
+        System.out.print("Объект отправлен клиенту " + name + "\r\n");
     }
 
     public void viewsNameAndClass(String nameObjectAnClass, String nameModel){

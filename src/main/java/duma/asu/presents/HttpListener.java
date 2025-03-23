@@ -1,31 +1,62 @@
 package duma.asu.presents;
 
+import com.sun.net.httpserver.HttpContext;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 import duma.asu.models.interfaces.SendDataParameter;
+import duma.asu.models.serializableModels.DataFile;
 import duma.asu.models.serializableModels.Parameter;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Logger;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import static java.lang.System.out;
 
 
-public class HttpServer {
+public class HttpListener {
+
+    private static final long serialVersionUID = 3L;
 
     private ClientManager clientManager;
 
+    private Logger _logger;
 
-    protected HttpServer(ClientManager clientManager) {
+    protected HttpListener(ClientManager clientManager) {
+
         this.clientManager = clientManager;
+        _logger = Logger.getLogger(HttpListener.class.getName());
+    }
+
+
+    private void commandSwitch(String urlSegment) throws Exception {
+
+        switch (urlSegment){
+            case "/parameter": sendObjectToClient(urlSegment);
+                break;
+            case "/video": sendVideoContentToClient(urlSegment);
+                break;
+        }
     }
 
 
 
-    private void commandSwitch(){
+    private void sendVideoContentToClient(String name){
+        SendDataParameter sendDataParameter = new DataFile(name);
 
+        this.clientManager.sendDataToClient(sendDataParameter);
+
+        this.clientManager.viewReadStreamReturnGenericObject.viewSendVideoContentToClient(name);
     }
-
 
     private void sendObjectToClient(String name) throws IOException, Exception {
 
@@ -34,12 +65,10 @@ public class HttpServer {
         this.clientManager.sendDataToClient(parameter);
 
         this.clientManager.viewReadStreamReturnGenericObject.viewSendModelToClient(parameter.getName());
-
-        out.print("serialize object... " + parameter);
     }
 
 
-    protected void httpListener(){
+    protected void createListener(){
 
         try (ServerSocket serverSocket = new ServerSocket(6088)) {
             out.println("Http server on port " +  serverSocket.getLocalPort() + ", started!");
@@ -49,9 +78,6 @@ public class HttpServer {
                 Socket socket = serverSocket.accept();
                 out.println("Client connected!");
 
-
-                sendObjectToClient("client_name");
-
                 // для подключившегося клиента открываем потоки
                 // чтения и записи
                 try (BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
@@ -60,11 +86,20 @@ public class HttpServer {
                     // ждем первой строки запроса
                     while (!input.ready()) ;
 
+
                     // считываем и печатаем все что было отправлено клиентом
                     out.println();
                     while (input.ready()) {
-                        out.println(input.readLine());
+
+                        String header = input.readLine();
+
+                        String[] arrayHeader = header.split(" ");
+                        if(arrayHeader.length - 1 > 1){
+                            commandSwitch(arrayHeader[1]);
+                        }
+                        out.print(header + "\r\n");
                     }
+
 
                     // отправляем ответ
                     try(PrintWriter printWriter = new PrintWriter(socket.getOutputStream())){
@@ -84,11 +119,10 @@ public class HttpServer {
             }
         } catch (IOException ex) {
             ex.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
     }
+
 }

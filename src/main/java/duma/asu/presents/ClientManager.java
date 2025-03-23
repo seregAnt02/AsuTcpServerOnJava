@@ -13,15 +13,13 @@ import java.util.Map;
 
 public class ClientManager implements Runnable{
     private final Socket socket;
-    /*private BufferedReader bufferedReader;
-    private BufferedWriter bufferedWriter;*/
     private final ObjectInputStream input;
     private final ObjectOutputStream output;
     private String name;
     public static Map<String, ClientManager> clients = new HashMap<>();
 
     protected ViewReadStreamReturnGenericObject viewReadStreamReturnGenericObject;
-    private ReadWriteStreamAndReturnGenericObject<Parameter> readStreamAndReturnGenericObject;
+    private ReadWriteStreamAndReturnGenericObject readStreamAndReturnGenericObject;
 
     protected ClientManager(Socket socket) throws IOException, ClassNotFoundException {
         this.socket = socket;
@@ -33,7 +31,7 @@ public class ClientManager implements Runnable{
 
         Runnable task = () -> {
 
-            new HttpServer(this).httpListener();
+            new HttpListener(this).createListener();
         };
         Thread thread = new Thread(task);
         thread.start();
@@ -42,8 +40,7 @@ public class ClientManager implements Runnable{
         viewReadStreamReturnGenericObject = new ViewReadStreamReturnGenericObject();
 
 
-        SendDataParameter sendDataParameter = readStreamAndReturnGenericObject.InputDeserialization();
-        //Parameter parameter = (Parameter) sendDataParameter;
+        SendDataParameter sendDataParameter = (SendDataParameter) readStreamAndReturnGenericObject.InputDeserialization();
         viewReadStreamReturnGenericObject.viewsNameAndClass(sendDataParameter.getClass().toString(),
                 sendDataParameter.getName());
 
@@ -55,7 +52,7 @@ public class ClientManager implements Runnable{
     public void run() {
         while (socket.isConnected()){
             try {
-                SendDataParameter sendDataParameter  = readStreamAndReturnGenericObject.InputDeserialization();
+                SendDataParameter sendDataParameter  = (SendDataParameter) readStreamAndReturnGenericObject.InputDeserialization();
                 viewReadStreamReturnGenericObject.viewsNameAndClass(sendDataParameter.getClass().toString(),
                         sendDataParameter.getName());
                 sendDataToClient(sendDataParameter);

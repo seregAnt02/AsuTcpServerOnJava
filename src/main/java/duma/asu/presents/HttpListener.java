@@ -1,8 +1,5 @@
 package duma.asu.presents;
 
-import com.sun.net.httpserver.HttpContext;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import duma.asu.models.interfaces.SendDataParameter;
 import duma.asu.models.serializableModels.DataFile;
 import duma.asu.models.serializableModels.Parameter;
@@ -10,15 +7,8 @@ import duma.asu.models.serializableModels.Parameter;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.http.HttpClient;
-import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import static java.lang.System.out;
 
@@ -38,12 +28,14 @@ public class HttpListener {
     }
 
 
-    private void commandSwitch(String urlSegment) throws Exception {
+    private void command_switch_for_client(String urlSegment) throws Exception {
 
-        switch (urlSegment){
-            case "/parameter": sendObjectToClient(urlSegment);
+        switch (urlSegment) {
+            case "/parameter":
+                sendObjectToClient(urlSegment);
                 break;
-            case "/video": sendVideoContentToClient(urlSegment);
+            case "/video":
+                sendVideoContentToClient(urlSegment);
                 break;
         }
     }
@@ -51,7 +43,10 @@ public class HttpListener {
 
 
     private void sendVideoContentToClient(String name){
-        SendDataParameter sendDataParameter = new DataFile(name);
+
+        DataFile dataFile = new DataFile(name);
+        dataFile.setChannel(1);
+        SendDataParameter sendDataParameter = dataFile;
 
         this.clientManager.sendDataToClient(sendDataParameter);
 
@@ -84,7 +79,7 @@ public class HttpListener {
                      ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream())) {
 
                     // ждем первой строки запроса
-                    while (!input.ready()) ;
+                    //while (!input.ready()) ;
 
 
                     // считываем и печатаем все что было отправлено клиентом
@@ -95,7 +90,7 @@ public class HttpListener {
 
                         String[] arrayHeader = header.split(" ");
                         if(arrayHeader.length - 1 > 1){
-                            commandSwitch(arrayHeader[1]);
+                            command_switch_for_client(arrayHeader[1]);
                         }
                         out.print(header + "\r\n");
                     }
@@ -111,7 +106,6 @@ public class HttpListener {
                     }catch (IOException ex){
                         out.print(ex.getMessage());
                     }
-
                     // по окончанию выполнения блока try-with-resources потоки,
                     // а вместе с ними и соединение будут закрыты
                     out.println("Client disconnected!");

@@ -19,7 +19,7 @@ public class ClientManager implements Runnable{
     public static Map<String, ClientManager> clients = new HashMap<>();
 
     protected ViewReadStreamReturnGenericObject viewReadStreamReturnGenericObject;
-    private ReadWriteStreamAndReturnGenericObject readStreamAndReturnGenericObject;
+    private ReadWriteStreamAndReturnGenericObject<SendDataParameter> readStreamAndReturnGenericObject;
 
     protected ClientManager(Socket socket) throws IOException, ClassNotFoundException {
         this.socket = socket;
@@ -35,6 +35,9 @@ public class ClientManager implements Runnable{
         };
         Thread thread = new Thread(task);
         thread.start();
+
+
+        new ReceivingDataFromClient().start_receiving_data();
 
 
         viewReadStreamReturnGenericObject = new ViewReadStreamReturnGenericObject();
@@ -56,6 +59,7 @@ public class ClientManager implements Runnable{
                 viewReadStreamReturnGenericObject.viewsNameAndClass(sendDataParameter.getClass().toString(),
                         sendDataParameter.getName());
                 sendDataToClient(sendDataParameter);
+
             } catch (IOException e) {
                 closeEverything();
             } catch (ClassNotFoundException e) {

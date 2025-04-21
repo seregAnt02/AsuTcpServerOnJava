@@ -1,6 +1,5 @@
 package duma.asu.presents;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -19,10 +18,12 @@ public class ReceivingDataFromClient extends Thread{
 
     private Logger _logger;
 
-    public ReceivingDataFromClient() throws SocketException {
+    static Path PACKED_VIDEO_FILES;
 
+    public ReceivingDataFromClient() throws SocketException {
         socket = new DatagramSocket(4445);
         _logger = Logger.getLogger(ReceivingDataFromClient.class.getName());
+        PACKED_VIDEO_FILES = Path.of("/var/www/video/window_0");;
     }
 
 
@@ -31,6 +32,7 @@ public class ReceivingDataFromClient extends Thread{
         try{
             receiving();
         }catch (Exception ex){
+            socket.close();
             _logger.info(ex.getMessage());
         }
 
@@ -47,30 +49,17 @@ public class ReceivingDataFromClient extends Thread{
 
     private void creates_file(byte[] data) {
 
-        String packed_video_files = "/src/main/resources/video_content";
-        String userDirectory = System.getProperty("user.dir");
-
-        Path path = Path.of(userDirectory + packed_video_files);
-        //File file = new File(userDirectory + packed_video_files);
-
         byte[] length_file_in_byte =  new byte[4];
-
         IntStream.range(0, length_file_in_byte.length).forEach(x -> length_file_in_byte[x] = data[x]);
-
         byte[] bytes_name = new byte[23];
-
         IntStream.range(0, bytes_name.length).forEach(x -> bytes_name[x] = data[x + length_file_in_byte.length]);
-
         int length_file = ByteBuffer.wrap(length_file_in_byte).getInt();
-
         byte[] byte_files = new byte[length_file];
-
         IntStream.range(0, byte_files.length)
                 .forEach(x -> byte_files[x] = data[x + length_file_in_byte.length + bytes_name.length]);
 
         String file_name = new String(bytes_name, 0, bytes_name.length);
-
-        try (FileOutputStream outputStream = new FileOutputStream(path + "//" + file_name)) {
+        try (FileOutputStream outputStream = new FileOutputStream(PACKED_VIDEO_FILES + "//" + file_name)) {
             outputStream.write(byte_files);
             System.out.println("Создан файл: " + file_name);
         }catch (Exception ex){
@@ -88,20 +77,16 @@ public class ReceivingDataFromClient extends Thread{
                 byte[] buf = new byte[24500];
                 DatagramPacket packet
                         = new DatagramPacket(buf, buf.length);
-
                 socket.receive(packet);
 
                 InetAddress address = packet.getAddress();
                 int port = packet.getPort();
                 packet = new DatagramPacket(buf, buf.length, address, port);
-
                 byte[] data  = packet.getData();
-
                 creates_file(data);
 
-                //if(length_file_in_byte.length + bytes_name.length +  byte_files.length == packet.getLength()) break;
+                new DeleteFilesInDirectoryNginx().start();
             }
-            socket.close();
 
         }catch (Exception ex){
             System.out.println(ex.getMessage());

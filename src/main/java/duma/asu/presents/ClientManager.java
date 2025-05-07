@@ -37,7 +37,7 @@ public class ClientManager implements Runnable{
         thread.start();
 
 
-        new ReceivingDataFromClient().start_receiving_data();
+        new ReceivingDataFromClient().start();
 
 
         viewReadStreamReturnGenericObject = new ViewReadStreamReturnGenericObject();

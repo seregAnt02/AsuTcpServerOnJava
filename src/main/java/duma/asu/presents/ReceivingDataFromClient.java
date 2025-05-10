@@ -1,5 +1,6 @@
 package duma.asu.presents;
 
+import java.beans.Encoder;
 import java.io.FileOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -9,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class ReceivingDataFromClient extends Thread{
 
@@ -31,7 +33,7 @@ public class ReceivingDataFromClient extends Thread{
     @Override
     public void run() {
         try{
-            new DeleteFilesInDirectoryNginx(); //.start();
+            //new DeleteFilesInDirectoryNginx(); //.start();
             receiving();
         }catch (Exception ex){
             socket.close();
@@ -49,28 +51,28 @@ public class ReceivingDataFromClient extends Thread{
     }*/
 
 
-    private void creates_file(byte[] data){
+    private synchronized void creates_file(byte[] data){
 
-        byte[] byte_files = file_read_stream_to_array_byte(data);
-        String file_name = new String(byte_files, 0, byte_files.length);
+        int header_length = 4;
+        byte[] byte_name = new byte[header_length];
+        IntStream.range(0, byte_name.length).forEach(n -> byte_name[n] = data[n]);
+        int length_in_file = ByteBuffer.wrap(byte_name).getInt();
+        byte[] byte_file = read_file(data, length_in_file + header_length);
+        String file_name = new String(data, header_length, length_in_file);
         try (FileOutputStream outputStream = new FileOutputStream(PACKED_VIDEO_FILES + "//" + file_name)) {
-            outputStream.write(byte_files);
+            outputStream.write(byte_file);
             System.out.println("Создан файл: " + file_name);
         }catch (Exception ex){
             System.out.println(ex.getMessage());
         }
+        byte_file = null;
     }
 
-    private byte[] file_read_stream_to_array_byte(byte[] data) {
+    private byte[] read_file(byte[] data, int length_file) {
 
-        byte[] length_file_in_byte =  new byte[4];
-        IntStream.range(0, length_file_in_byte.length).forEach(x -> length_file_in_byte[x] = data[x]);
-        byte[] bytes_name = new byte[23];
-        IntStream.range(0, bytes_name.length).forEach(x -> bytes_name[x] = data[x + length_file_in_byte.length]);
-        int length_file = ByteBuffer.wrap(length_file_in_byte).getInt();
-        byte[] byte_files = new byte[length_file];
+        byte[] byte_files = new byte[data.length - length_file];
         IntStream.range(0, byte_files.length)
-                .forEach(x -> byte_files[x] = data[x + length_file_in_byte.length + bytes_name.length]);
+                .forEach(n -> byte_files[n] = data[length_file + n]);
         return byte_files;
     }
 
@@ -99,8 +101,4 @@ public class ReceivingDataFromClient extends Thread{
         }
     }
 
-
-    static void commandSwitch(){
-
-    }
 }

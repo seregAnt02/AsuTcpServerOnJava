@@ -61,7 +61,7 @@ public class DeleteFilesInDirectoryNginx extends Thread{
     }
 
 
-    private int file_delete(int number_file_to_delete) {
+    private void file_delete(int number_file_to_delete) throws InterruptedException {
 
         File[] array_files = file.listFiles();
         for (int i = 0; i < array_files.length; i++){
@@ -69,17 +69,16 @@ public class DeleteFilesInDirectoryNginx extends Thread{
             if(name_file.length == 3){
                 String[] file_extension = name_file[2].split("\\.");
                 int number_file = Integer.parseInt(file_extension[0]);
-                if(number_file_to_delete <= number_file){
+                if(number_file <= number_file_to_delete){
                     //if(array_files[i].delete())
                         System.out.println("Файл с номером: " + number_file + " удален.");
+                        Thread.sleep(100);
                 }
-                array_files = null;
                 file_extension = null;
-                name_file = null;
-                return  number_file;
             }
+            name_file = null;
         }
-        return 0;
+        array_files = null;
     }
 
 }

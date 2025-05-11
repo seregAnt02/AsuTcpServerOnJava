@@ -28,14 +28,12 @@ public class XmlParser {
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();//newSecureDocumentBuilderFactory();
             DocumentBuilder builder = builderFactory.newDocumentBuilder();
             Document xmlDocument = builder.parse(fileIS);
-            String segment = segmentTimelineToDeleteFiles(xmlDocument);
+            int number = Integer.parseInt(segmentTimelineToDeleteFiles(xmlDocument));
 
-            int number = file_chunk_identifier(segment);
             System.out.println("Файл на удаление: " + number);
             builderFactory = null;
             builder = null;
             xmlDocument = null;
-            segment = null;
             return number;
 
         }catch (Exception ex){
@@ -68,24 +66,5 @@ public class XmlParser {
         current = null;
         attr = null;
         return null;
-    }
-
-
-    private int file_chunk_identifier(String segment) {
-        File[] array_list = getFile().listFiles();
-
-        for (int i = 0; i < array_list.length; i++){
-            String name = array_list[i].getName();
-            String[] name_split = name.split("-");
-            if(name_split.length == 3){
-                String[] file_extension = name_split[2].split("\\.");
-                int number = Integer.parseInt(file_extension[0]);
-                file_extension = null;
-                return  number;
-            }
-            name_split = null;
-        }
-        array_list = null;
-        return 0;
     }
 }

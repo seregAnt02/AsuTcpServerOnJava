@@ -33,7 +33,7 @@ public class ReceivingDataFromClient extends Thread{
     @Override
     public void run() {
         try{
-            //new DeleteFilesInDirectoryNginx(); //.start();
+            new DeleteFilesInDirectoryNginx(); //.start();
             receiving();
         }catch (Exception ex){
             socket.close();
@@ -57,6 +57,7 @@ public class ReceivingDataFromClient extends Thread{
         try (FileOutputStream outputStream = new FileOutputStream(PACKED_VIDEO_FILES + "//" + file_name)) {
             outputStream.write(byte_file);
             System.out.println("Создан файл: " + file_name + " размер: " + byte_file.length);
+            Thread.sleep(100);
         }catch (Exception ex){
             System.out.println(ex.getMessage());
         }

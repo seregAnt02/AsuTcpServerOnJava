@@ -61,7 +61,7 @@ public class DeleteFilesInDirectoryNginx extends Thread{
     }
 
 
-    private synchronized int file_delete(int number_file_to_delete) {
+    private int file_delete(int number_file_to_delete) {
 
         File[] array_files = file.listFiles();
         for (int i = 0; i < array_files.length; i++){

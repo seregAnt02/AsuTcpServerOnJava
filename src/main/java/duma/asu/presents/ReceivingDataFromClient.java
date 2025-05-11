@@ -43,36 +43,31 @@ public class ReceivingDataFromClient extends Thread{
     }
 
 
-    /*public void start_receiving_data(){
-        Thread runnable = this;
-        runnable.start();
-
-        runnable = null;
-    }*/
-
-
     private synchronized void creates_file(byte[] data){
 
         int header_length = 4;
-        byte[] byte_name = new byte[header_length];
-        IntStream.range(0, byte_name.length).forEach(n -> byte_name[n] = data[n]);
-        int length_in_file = ByteBuffer.wrap(byte_name).getInt();
-        byte[] byte_file = read_file(data, length_in_file + header_length);
-        String file_name = new String(data, header_length, length_in_file);
+        byte[] name_length_in_byte = new byte[header_length];
+        IntStream.range(0, name_length_in_byte.length).forEach(n -> name_length_in_byte[n] = data[n]);
+        int length_name = ByteBuffer.wrap(name_length_in_byte).getInt();
+        byte[] file_length_in_byte = new byte[header_length];
+        IntStream.range(0, file_length_in_byte.length).forEach(n -> file_length_in_byte[n] = data[header_length + n]);
+        int length_in_file = ByteBuffer.wrap(file_length_in_byte).getInt();
+        byte[] byte_file = read_file(data, (header_length * 2) + length_name , length_in_file);
+        String file_name = new String(data, header_length * 2, length_name);
         try (FileOutputStream outputStream = new FileOutputStream(PACKED_VIDEO_FILES + "//" + file_name)) {
             outputStream.write(byte_file);
-            System.out.println("Создан файл: " + file_name);
+            System.out.println("Создан файл: " + file_name + " размер: " + byte_file.length);
         }catch (Exception ex){
             System.out.println(ex.getMessage());
         }
         byte_file = null;
     }
 
-    private byte[] read_file(byte[] data, int length_file) {
+    private byte[] read_file(byte[] data, int off,  int length_file) {
 
-        byte[] byte_files = new byte[data.length - length_file];
+        byte[] byte_files = new byte[length_file];
         IntStream.range(0, byte_files.length)
-                .forEach(n -> byte_files[n] = data[length_file + n]);
+                .forEach(n -> byte_files[n] = data[off + n]);
         return byte_files;
     }
 

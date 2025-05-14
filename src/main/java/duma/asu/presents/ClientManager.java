@@ -1,11 +1,13 @@
 package duma.asu.presents;
 
 import duma.asu.models.interfaces.SendDataParameter;
+import duma.asu.models.serializableModels.DataFile;
 import duma.asu.models.serializableModels.Parameter;
 import duma.asu.views.ViewReadStreamReturnGenericObject;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,12 +38,7 @@ public class ClientManager implements Runnable{
         Thread thread = new Thread(task);
         thread.start();
 
-
-        new ReceivingDataFromClient().start();
-
-
         viewReadStreamReturnGenericObject = new ViewReadStreamReturnGenericObject();
-
 
         SendDataParameter sendDataParameter = (SendDataParameter) readStreamAndReturnGenericObject.InputDeserialization();
         viewReadStreamReturnGenericObject.viewsNameAndClass(sendDataParameter.getClass().toString(),
@@ -51,6 +48,7 @@ public class ClientManager implements Runnable{
 
     }
 
+
     @Override
     public void run() {
         while (socket.isConnected()){
@@ -58,9 +56,10 @@ public class ClientManager implements Runnable{
                 SendDataParameter sendDataParameter  = (SendDataParameter) readStreamAndReturnGenericObject.InputDeserialization();
                 viewReadStreamReturnGenericObject.viewsNameAndClass(sendDataParameter.getClass().toString(),
                         sendDataParameter.getName());
-                sendDataToClient(sendDataParameter);
+                commandSwitch(sendDataParameter);
+                //sendDataToClient(sendDataParameter);
 
-            } catch (IOException e) {
+            } catch (IOException | InterruptedException e) {
                 closeEverything();
             } catch (ClassNotFoundException e) {
                 closeEverything();
@@ -68,6 +67,17 @@ public class ClientManager implements Runnable{
         }
     }
 
+
+    private void commandSwitch(SendDataParameter sendDataParameter) throws SocketException, InterruptedException {
+        if (sendDataParameter instanceof Parameter) {
+            System.out.println(Parameter.class.getName());
+        }
+        if (sendDataParameter instanceof DataFile) {
+            DataFile dataFile = (DataFile) sendDataParameter;
+            CreateFiles createFiles = new CreateFiles(dataFile);
+            createFiles.start_and_finish_thread();
+        }
+    }
 
     protected void sendDataToClient(SendDataParameter sendDataParameter){
         for (var client: clients.entrySet()) {

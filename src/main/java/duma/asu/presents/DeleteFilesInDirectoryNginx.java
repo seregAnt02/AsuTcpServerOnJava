@@ -1,7 +1,6 @@
 package duma.asu.presents;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -10,7 +9,7 @@ public class DeleteFilesInDirectoryNginx extends Thread{
 
     //private final Object lock = new Object();
     private static Map<Integer, Thread> files_nginx = new HashMap<>();
-    File file = new File(ReceivingDataFromClient.PACKED_VIDEO_FILES.toUri());
+    private File file = new File(CreateFiles.PACKED_VIDEO_FILES.toUri());
 
 
     private Logger _log;
@@ -18,7 +17,7 @@ public class DeleteFilesInDirectoryNginx extends Thread{
 
     public DeleteFilesInDirectoryNginx() {
         this.start();
-        _log = Logger.getLogger(ReceivingDataFromClient.class.getName());
+        _log = Logger.getLogger(CreateFiles.class.getName());
     }
 
     @Override
@@ -70,9 +69,10 @@ public class DeleteFilesInDirectoryNginx extends Thread{
                 String[] file_extension = name_file[2].split("\\.");
                 int number_file = Integer.parseInt(file_extension[0]);
                 if(number_file <= number_file_to_delete){
-                    //if(array_files[i].delete())
-                        System.out.println("Файл с номером: " + number_file + " удален.");
+                    if(array_files[i].delete()) {
+                        System.out.println("Файл с номером: " + array_files[i].getName() + " удален.");
                         Thread.sleep(100);
+                    }
                 }
                 file_extension = null;
             }

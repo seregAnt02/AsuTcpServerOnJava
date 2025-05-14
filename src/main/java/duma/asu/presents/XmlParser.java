@@ -24,13 +24,12 @@ public class XmlParser {
 
 
     public int number_file_to_delete(){
-        try(FileInputStream fileIS = new FileInputStream(ReceivingDataFromClient.PACKED_VIDEO_FILES.toString() + "/dash.mpd")){
+        try(FileInputStream fileIS = new FileInputStream(CreateFiles.PACKED_VIDEO_FILES.toString() + "/dash.mpd")){
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();//newSecureDocumentBuilderFactory();
             DocumentBuilder builder = builderFactory.newDocumentBuilder();
             Document xmlDocument = builder.parse(fileIS);
             int number = Integer.parseInt(segmentTimelineToDeleteFiles(xmlDocument));
-
-            System.out.println("Файл на удаление: " + number);
+            //System.out.println("Файл на удаление: " + number);
             builderFactory = null;
             builder = null;
             xmlDocument = null;
@@ -54,8 +53,8 @@ public class XmlParser {
                 for (int j = 0; j < current.getAttributes().getLength(); j++){
                     attr = current.getAttributes().item(j);
                     if(attr.getNodeType() == Node.ATTRIBUTE_NODE && attr.getNodeName().equals("r")){
-                        System.out.println(
-                                attr.getNodeName() + ": " + attr.getTextContent());
+                        /*System.out.println(
+                                attr.getNodeName() + ": " + attr.getTextContent());*/
                         return attr.getTextContent();
                     }
                 }

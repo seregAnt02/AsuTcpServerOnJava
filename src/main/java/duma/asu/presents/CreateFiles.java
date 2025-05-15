@@ -1,7 +1,10 @@
 package duma.asu.presents;
 
 import duma.asu.models.interfaces.SendDataParameter;
+import duma.asu.models.serializableModels.DataFile;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.SocketException;
 import java.nio.file.Path;
@@ -9,7 +12,7 @@ import java.util.logging.Logger;
 
 public class CreateFiles extends Thread{
 
-    private SendDataParameter sendDataParameter;
+    private DataFile sendDataParameter;
 
     private boolean running;
 
@@ -20,7 +23,7 @@ public class CreateFiles extends Thread{
     static Path PACKED_VIDEO_FILES;
 
 
-    public CreateFiles(SendDataParameter sendDataParameter) throws SocketException {
+    public CreateFiles(DataFile sendDataParameter) throws SocketException {
         this.sendDataParameter = sendDataParameter;
         _logger = Logger.getLogger(CreateFiles.class.getName());
         PACKED_VIDEO_FILES = Path.of("/var/www/video/window_0");
@@ -46,8 +49,14 @@ public class CreateFiles extends Thread{
     }
 
     private synchronized void creates_file() throws IOException, ClassNotFoundException, InterruptedException {
-        System.out.println("create video file: "  + sendDataParameter.getName());
-        Thread.sleep(100);
+        try(FileOutputStream input = new FileOutputStream( PACKED_VIDEO_FILES + "/" + sendDataParameter.getName())){
+            input.write(sendDataParameter.getData(), 0, sendDataParameter.getData().length);
+            input.flush();
+            System.out.println("create video file: "  + sendDataParameter.getName());
+            Thread.sleep(100);
+        }catch (Exception ex){
+            System.out.println(ex.getMessage());
+        }
     }
 
 }

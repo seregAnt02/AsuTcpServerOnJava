@@ -43,6 +43,11 @@ public class DataFile implements Serializable, SendDataParameter {
         this.channel = channel;
     }
 
+
+    public byte[] getData() {
+        return data;
+    }
+
     @Override
     public String toString() {
         return "DataFile{" +

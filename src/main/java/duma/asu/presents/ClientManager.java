@@ -8,6 +8,7 @@ import duma.asu.views.ViewReadStreamReturnGenericObject;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ public class ClientManager implements Runnable{
     private final Socket socket;
     private final ObjectInputStream input;
     private final ObjectOutputStream output;
+    static Path PACKED_VIDEO_FILES;
     private String name;
     public static Map<String, ClientManager> clients = new HashMap<>();
 
@@ -27,6 +29,8 @@ public class ClientManager implements Runnable{
         this.socket = socket;
         this.input = new ObjectInputStream(socket.getInputStream());
         this.output = new ObjectOutputStream(socket.getOutputStream());
+
+        PACKED_VIDEO_FILES = Path.of("/var/www/video/window_0");
 
         readStreamAndReturnGenericObject = new ReadWriteStreamAndReturnGenericObject(this.input);
 
@@ -45,6 +49,8 @@ public class ClientManager implements Runnable{
                 sendDataParameter.getName());
 
         clients.put(sendDataParameter.getName(), this);
+
+        new DeleteFilesInDirectoryNginx();
 
     }
 

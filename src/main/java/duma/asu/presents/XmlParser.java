@@ -24,7 +24,7 @@ public class XmlParser {
 
 
     public int number_file_to_delete(){
-        try(FileInputStream fileIS = new FileInputStream(CreateFiles.PACKED_VIDEO_FILES.toString() + "/dash.mpd")){
+        try(FileInputStream fileIS = new FileInputStream(ClientManager.PACKED_VIDEO_FILES.toString() + "/dash.mpd")){
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();//newSecureDocumentBuilderFactory();
             DocumentBuilder builder = builderFactory.newDocumentBuilder();
             Document xmlDocument = builder.parse(fileIS);

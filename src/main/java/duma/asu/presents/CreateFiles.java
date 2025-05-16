@@ -20,13 +20,10 @@ public class CreateFiles extends Thread{
 
     private Logger _logger;
 
-    static Path PACKED_VIDEO_FILES;
-
 
     public CreateFiles(DataFile sendDataParameter) throws SocketException {
         this.sendDataParameter = sendDataParameter;
         _logger = Logger.getLogger(CreateFiles.class.getName());
-        PACKED_VIDEO_FILES = Path.of("/var/www/video/window_0");
         header_length = 4;
     }
 
@@ -49,7 +46,7 @@ public class CreateFiles extends Thread{
     }
 
     private synchronized void creates_file() throws IOException, ClassNotFoundException, InterruptedException {
-        try(FileOutputStream input = new FileOutputStream( PACKED_VIDEO_FILES + "/" + sendDataParameter.getName())){
+        try(FileOutputStream input = new FileOutputStream( ClientManager.PACKED_VIDEO_FILES + "/" + sendDataParameter.getName())){
             input.write(sendDataParameter.getData(), 0, sendDataParameter.getData().length);
             input.flush();
             System.out.println("create video file: "  + sendDataParameter.getName());

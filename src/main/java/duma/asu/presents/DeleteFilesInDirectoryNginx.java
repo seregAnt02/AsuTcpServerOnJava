@@ -9,7 +9,7 @@ public class DeleteFilesInDirectoryNginx extends Thread{
 
     //private final Object lock = new Object();
     private static Map<Integer, Thread> files_nginx = new HashMap<>();
-    private File file = new File(CreateFiles.PACKED_VIDEO_FILES.toUri());
+    private File file = new File(ClientManager.PACKED_VIDEO_FILES.toUri());
 
 
     private Logger _log;
@@ -28,7 +28,7 @@ public class DeleteFilesInDirectoryNginx extends Thread{
             while (true) {
                 Thread.sleep(10000);
                 int number_file_to_delete = new XmlParser(this.file).number_file_to_delete();
-                file_delete(number_file_to_delete);
+                file_delete(31);
             }
         }catch (Exception ex){
             _log.info(ex.getMessage());
